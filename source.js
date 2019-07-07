@@ -1,4 +1,4 @@
-
+//Getting authentication and token from the simplybook
 var loginClient = new JSONRpcClient({
 	'url': 'https://user-api.simplybook.me' + '/login',
 	'onerror': function (error) {},
@@ -13,17 +13,23 @@ this.client = new JSONRpcClient({
 	},
 	'onerror': function (error) {}
 });
+//End of authentication
+
+//Getting the list of services from simplybook
 var services = client.getEventList();
 
 console.log(services);
 
 var object_number = Object.keys(services).length+1
 
+//Printing the list of services
 var output='';
 for(var i=1;i<object_number;i++){
     output += '<li>'+services[i].name+'</li>';
 }
+document.getElementById("name").innerHTML = output;
 
+//Creating an array of the services name
 var tmp_services_array='';
 for(var i=1;i<object_number;i++){
     tmp_services_array += ""+services[i].name+",";
@@ -31,11 +37,10 @@ for(var i=1;i<object_number;i++){
 tmp_services_array = tmp_services_array.slice(0,-1);
 console.log(tmp_services_array);
 
-document.getElementById("name").innerHTML = output;
-
 var services_array = tmp_services_array.split(",");
 console.log(services_array);
 
+//Printing the dropdown list
 var select = document.getElementById("select_services");
 for(var i = 0; i <object_number; i++) {
     var opt = services_array[i];
