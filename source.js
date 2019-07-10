@@ -49,3 +49,20 @@ for(var i = 0; i <object_number; i++) {
     el.value = opt;
     select.appendChild(el);
 }
+
+//testing example of getting work days info
+var year = 2019;
+var month = 7;
+var performerID =1;
+var workdays = client.getWorkCalendar(year, month, performerID);
+console.log(workdays);
+
+var workdays = client.getWorkCalendar(year, month, 0);
+console.log(workdays)
+
+var workdaysoutput = '';
+for(var i = 0; i < object_number; i++)
+{
+	workdaysoutput += '<li>'+workdays[i]+'</li>'
+}
+document.getElementById("worktimes").innerHTML = workdaysoutput;
