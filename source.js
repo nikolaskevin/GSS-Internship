@@ -13,10 +13,6 @@ this.client = new JSONRpcClient({
 	},
 	'onerror': function (error) {}
 });
-
-
-
-
 //End of authentication
 
 //Getting the list of services from simplybook
@@ -30,7 +26,7 @@ console.log(object_number);
 var output='';
 var select = document.getElementById("select_services");
 for(var i=0;i<object_number;i++){
-	var idx = i; // key2
+	var idx = i; 
 
 	//Printing the list of services
 	var key = Object.keys(services)[idx];
