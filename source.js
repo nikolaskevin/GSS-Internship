@@ -20,7 +20,7 @@ var services = client.getEventList();
 
 console.log(services);
 
-var object_number = Object.keys(services).length
+/*var object_number = Object.keys(services).length
 console.log(object_number);
 
 var output='';
@@ -45,6 +45,53 @@ for(var i=0;i<object_number;i++){
 }
 //Printing the list of services
 document.getElementById("name").innerHTML = output;
+*/
+var performers = client.getUnitList ();
 
-//Printing the dropdown list
-var unit = client.getUnitList ();
+console.log(performers);
+
+$('#select_services').empty();
+
+$('#select_providers').empty();
+
+$('#select_providers').append('<option value=""></option>');
+
+$('#select_services').append('<option value=""></option>');
+
+for (var id in services) {
+
+    $('#select_services').append('<option value="' + id + '">' + services[id].name + '</option>');
+
+};
+
+
+var serviceId;
+
+var performerId;
+
+$('#select_services').change(function () {
+
+	serviceId = $(this).val();
+
+	var selectedService = services[serviceId];
+	
+	$("#select_providers").empty();
+	
+	for (var x in selectedService.unit_map) {
+
+				$('#select_providers').append('<option value="' + x + '">' + performers[x].name + '</option>');
+
+	};
+
+	$('#eventId').val(serviceId).change();
+
+
+});
+
+$('#select_provider').change(function () {
+
+	performerId = $(this).val();
+
+	$('#unitId').val(performerId).change();
+
+});
