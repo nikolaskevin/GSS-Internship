@@ -1,0 +1,265 @@
+﻿<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://simplybook.asia/api_example/json-rpc-client.js"></script>
+<style>
+div {
+    display : none;
+    max-width : 300px;
+    font-size : 18px;
+    background-color : orange;
+    margin : auto;
+    border-style : solid;
+    border-width : 2px;
+    border-color : brown;
+}
+p {
+    margin : 1px;
+};
+</style>
+<title>GSSMCU Booking</title>
+</head>
+<body>
+
+<div id="header">Welcome GSSMCU!
+</div>
+
+<div id = "container">
+<p id="ss">Please select service:</p>
+<select id="select_event_id">
+</select>
+<p id = "sp">Please select provider:</p>
+<select id="select_unit_id">
+</select>
+<p id = "sid">serviceId: <input id="eventId" type="text"></p>
+<p id = "pid">performerId: <input id="unitId" type="text"></p>
+<button id="bu" onclick="gocheckdatetime()">OK1</button>
+
+<p id="sd">Please select date:</p>
+<select id="select_date">
+</select>
+<p id = "st">Please select time:</p>
+<select id="select_time">
+</select>
+<p >selected date: <input id="date_selected" type="text"></p>
+<p >selected time: <input id="time_selected" type="text"></p>
+<button id="bucc" onclick="fillcontact()">OK2</button>
+
+<p id = "cname">name: <br><input id="iname" type="text"></p>
+<p id = "cemail">email: <br><input id="iemail" type="text"></p>
+<p id = "cphone">phone: <br><input id="iphone" type="text"></p>
+
+<button id="bubb" onclick="gobook()">BOOK</button>
+
+
+<p id="dd">Booking Done</p>
+</div>
+
+<div id="footer">Service Call: 0800-GSS-MCU
+</div>  
+<script>
+// hide everything but service selection
+$("#select_unit_id").hide();
+$("#eventId").hide();
+$("#unitId").hide();
+$("#bu").hide();
+$("#bucc").hide();
+$("#select_date").hide();
+$("#select_time").hide();
+$("#date_selected").hide();
+$("#time_selected").hide();
+$("#bubb").hide();
+$("p").hide();
+
+$("div").show();
+$("#ss").show();
+
+// get API token
+
+var loginClient = new JSONRpcClient({
+	'url': 'https://user-api.simplybook.me' + '/login',
+	'onerror': function (error) {},
+});
+var token = loginClient.getToken('gssmcu', '860d7fdded70c5baa39e5c34edb1cceb22d9a1fba254a22f7901057d8414ad29');
+
+this.client = new JSONRpcClient({
+	'url': 'https://user-api.simplybook.me',
+	'headers': {
+		'X-Company-Login': 'gssmcu',
+		'X-Token': token
+	},
+	'onerror': function (error) {}
+});
+
+// get services and performers
+
+var services = client.getEventList();
+var performers = client.getUnitList();
+
+// fetch service and performers selects 
+
+var serviceId;
+
+var performerId;
+
+$('#select_event_id').empty();
+
+$('#select_unit_id').empty();
+
+$('#select_event_id').append('<option value=""></option>');
+
+$('#select_unit_id').append('<option value=""></option>');
+
+for (var id in services) {
+
+    $('#select_event_id').append('<option value="' + id + '">' + services[id].name + '</option>');
+
+};
+
+
+// get selected service
+$('#select_event_id').change(function () {
+
+        serviceId = $(this).val();
+
+        var selectedService = services[serviceId];
+
+        $("#select_unit_id").empty();
+        
+        $('#select_unit_id').append('<option value="">Select a provider</option>');
+
+        for (var x in selectedService.unit_map) {
+
+                    $('#select_unit_id').append('<option value="' + x + '">' + performers[x].name + '</option>');
+
+        };
+
+        $('#eventId').val(serviceId).change();
+
+        $("#sp").show();
+        $("#select_unit_id").show();
+
+        console.log(serviceId);
+
+});
+
+// get selected performer
+$('#select_unit_id').change(function () {
+
+        performerId = $(this).val();
+
+        $('#unitId').val(performerId).change();
+
+        $("#bu").show();
+
+        console.log(performerId);
+
+});
+
+
+
+// when click the first OK button gocheckdatetime() is invoked
+function gocheckdatetime() {
+var firstWorkingDay = client.getFirstWorkingDay(performerId);
+// $('#first_date').val(firstWorkingDay).change();
+
+
+// add 6 days for "from date" and "to date"
+var d = Date.parse(firstWorkingDay);
+d = d + 6*24*60*60*1000;
+var f = new Date();
+f.setTime(d);
+var ff =f.toISOString();
+var firstWorkingDayAdd6 = ff.substr(0, 10);
+var startMatrix = client.getStartTimeMatrix(firstWorkingDay, firstWorkingDayAdd6, serviceId, performerId, 1);
+
+// window.alert("startMatrix  "+JSON.stringify(startMatrix));
+// select date and time
+var sdate;
+
+var stime;
+
+$('#select_date').empty();
+
+$('#select_date').append('<option value=""></option>');
+
+for (var id in startMatrix) {
+
+    if(startMatrix[id].length ) {
+       $('#select_date').append('<option value="' + id + '">' + id + '</option>');
+
+    };
+};
+
+$("#sd").show();
+$("#select_date").show();
+// $('#select_date').val(sdate).change();
+
+$('#select_time').empty();
+
+$('#select_time').append('<option value=""></option>');
+
+
+
+
+$('#select_date').change(function () {
+
+        sdate = $(this).val();
+
+        for (var id in startMatrix[sdate]) {
+          $('#select_time').append('<option value="' + id + '">' + startMatrix[sdate][id] + '</option>');
+
+        };
+
+       $('#date_selected').val(sdate).change();
+
+       $("#st").show();
+       $("#select_time").show();
+
+       console.log(sdate);
+       window.date=sdate;
+});
+
+
+$('#select_time').change(function () {
+
+        stime = $(this).val();
+
+        $('#time_selected').val(startMatrix[sdate][stime]).change();
+
+        $("#bucc").show();
+        console.log(startMatrix[sdate][stime]);
+        window.time=startMatrix[sdate][stime]
+});
+}
+
+function fillcontact() {
+$("#cname").show();
+$("#cemail").show();
+$("#cphone").show();
+$("#bubb").show();
+console.log(serviceId, performerId, date, time);
+}
+
+function gobook() {
+// var b = client.book(1,4,'2019-07-19','09:00:00',{name:'Mo', email:'abc@abc.com',  phone: '009876'},{},1);
+// parameters in sequence: serviceId, providerId, date, time, contactinfo, unknown {}, count
+// get ***validated*** contactinfo from input first!
+// modify thefirst statement can remove the slashes to make it a real book
+
+        var b = client.book(
+                serviceId, performerId, date, time, 
+            	{'name': $('#iname').val(), 'email': $('#iemail').val(), 'phone': $('#iphone').val()},
+            	{}, 1
+                );
+
+        console.log($('#iname').val(),$('#iemail').val(),$('#iphone').val()) 
+$("#dd").show();
+}
+</script>
+
+</body>
+</html>
+
+
