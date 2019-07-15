@@ -171,8 +171,8 @@ var firstWorkingDay = client.getFirstWorkingDay(performerId);
 var d = Date.parse(firstWorkingDay); //converts the Date string into miliseconds
 d = d + 6*24*60*60*1000; //adds six days in ms unit to the variable d
 var f = new Date(); //assigns current Date and Time of the local machine
-f.setTime(d); //assigns the Date and Time value represented in d into the Date and Time format of f
-var ff =f.toISOString(); //converts the longer string of f into an ISO Date and Time string
+f.setTime(d); //assigns the Date and Time value represented in d into the Date and Time format of f (end of f contains no time information)
+var ff =f.toISOString(); //converts the longer string of f into an ISO Date and Time string (end of ff contains no time information)
 var firstWorkingDayAdd6 = ff.substr(0, 10); //reads and assigns the Date portion of the ISO string
 var startMatrix = client.getStartTimeMatrix(firstWorkingDay, firstWorkingDayAdd6, serviceId, performerId, 1);
 // window.alert("startMatrix  "+JSON.stringify(startMatrix));
