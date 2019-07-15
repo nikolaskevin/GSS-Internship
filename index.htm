@@ -1,8 +1,8 @@
 ﻿<html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://simplybook.asia/api_example/json-rpc-client.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> <!--Allows jquery to be used in this file by calling jquery library-->
+<script src="https://simplybook.asia/api_example/json-rpc-client.js"></script> <!--Calls the Simplybook API-->
 <style>
 div {
     display : none;
@@ -22,7 +22,7 @@ p {
 </head>
 <body>
 
-<div id="header">Welcome GSSMCU!
+<div id="header">Welcome to GSSMCU!
 </div>
 
 <div id = "container">
@@ -34,7 +34,7 @@ p {
 </select>
 <p id = "sid">serviceId: <input id="eventId" type="text"></p>
 <p id = "pid">performerId: <input id="unitId" type="text"></p>
-<button id="bu" onclick="gocheckdatetime()">OK1</button>
+<button id="bu" onclick="gocheckdatetime()">OK</button>
 
 <p id="sd">Please select date:</p>
 <select id="select_date">
@@ -42,9 +42,11 @@ p {
 <p id = "st">Please select time:</p>
 <select id="select_time">
 </select>
+
+
 <p >selected date: <input id="date_selected" type="text"></p>
 <p >selected time: <input id="time_selected" type="text"></p>
-<button id="bucc" onclick="fillcontact()">OK2</button>
+<button id="bucc" onclick="fillcontact()">OK</button>
 
 <p id = "cname">name: <br><input id="iname" type="text"></p>
 <p id = "cemail">email: <br><input id="iemail" type="text"></p>
@@ -71,6 +73,7 @@ $("#date_selected").hide();
 $("#time_selected").hide();
 $("#bubb").hide();
 $("p").hide();
+
 
 $("div").show();
 $("#ss").show();
@@ -103,11 +106,11 @@ var serviceId;
 
 var performerId;
 
-$('#select_event_id').empty();
+$('#select_event_id').empty(); //used to "empty" the drop down list. Removes unnecessary blank option in list.
 
 $('#select_unit_id').empty();
 
-$('#select_event_id').append('<option value=""></option>');
+$('#select_event_id').append('<option value=""></option>'); //adds option to the list. Character string between >< will be displayed. Currently blank.
 
 $('#select_unit_id').append('<option value=""></option>');
 
@@ -118,7 +121,7 @@ for (var id in services) {
 };
 
 
-// get selected service
+//section checks for changes to the service selection and updates the providers dropdownlist accordingly.
 $('#select_event_id').change(function () {
 
         serviceId = $(this).val();
@@ -144,7 +147,7 @@ $('#select_event_id').change(function () {
 
 });
 
-// get selected performer
+//section checks for changes to the service provider selected
 $('#select_unit_id').change(function () {
 
         performerId = $(this).val();
@@ -166,14 +169,14 @@ var firstWorkingDay = client.getFirstWorkingDay(performerId);
 
 
 // add 6 days for "from date" and "to date"
-var d = Date.parse(firstWorkingDay);
-d = d + 6*24*60*60*1000;
-var f = new Date();
-f.setTime(d);
-var ff =f.toISOString();
-var firstWorkingDayAdd6 = ff.substr(0, 10);
+var d = Date.parse(firstWorkingDay); //parse converts the date string into ms units
+d = d + 6*24*60*60*1000; //adds six days in ms unit to the variable d
+var f = new Date(); //creates new variable f. Assigns current date and time to f
+f.setTime(d); //assigns new date value from into f. Format of F is preserved
+var ff =f.toISOString(); //converts the date value into ISO date string.
+var firstWorkingDayAdd6 = ff.substr(0, 10); //reads only the Date portion of the ISO date string into new variable
 var startMatrix = client.getStartTimeMatrix(firstWorkingDay, firstWorkingDayAdd6, serviceId, performerId, 1);
-
+console.log(startMatrix);//test line
 // window.alert("startMatrix  "+JSON.stringify(startMatrix));
 // select date and time
 var sdate;
@@ -248,6 +251,7 @@ function gobook() {
 // get ***validated*** contactinfo from input first!
 // modify thefirst statement can remove the slashes to make it a real book
 
+//Kevin's modified section below for non hardcoded values
         var b = client.book(
                 serviceId, performerId, date, time, 
             	{'name': $('#iname').val(), 'email': $('#iemail').val(), 'phone': $('#iphone').val()},
