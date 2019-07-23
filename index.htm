@@ -43,7 +43,6 @@ p {
 <select id="select_time">
 </select>
 
-
 <p >selected date: <input id="date_selected" type="text"></p>
 <p >selected time: <input id="time_selected" type="text"></p>
 <button id="bucc" onclick="fillcontact()">OK</button>
@@ -170,14 +169,13 @@ console.log(firstWorkingDay);
 
 
 // add 6 days for "from date" and "to date"
-var d = Date.parse(firstWorkingDay); //parse converts the date string into ms units
+var d = Date.parse(firstWorkingDay); //converts the Date string into miliseconds
 d = d + 6*24*60*60*1000; //adds six days in ms unit to the variable d
-var f = new Date(); //creates new variable f. Assigns current date and time to f
-f.setTime(d); //assigns new date value from into f. Format of F is preserved
-var ff =f.toISOString(); //converts the date value into ISO date string.
-var firstWorkingDayAdd6 = ff.substr(0, 10); //reads only the Date portion of the ISO date string into new variable
+var f = new Date(); //assigns current Date and Time of the local machine
+f.setTime(d); //assigns the Date and Time value represented in d into the Date and Time format of f (end of f contains no time information)
+var ff =f.toISOString(); //converts the longer string of f into an ISO Date and Time string (end of ff contains no time information)
+var firstWorkingDayAdd6 = ff.substr(0, 10); //reads and assigns the Date portion of the ISO string
 var startMatrix = client.getStartTimeMatrix(firstWorkingDay, firstWorkingDayAdd6, serviceId, performerId, 1);
-console.log(startMatrix);//test line
 // window.alert("startMatrix  "+JSON.stringify(startMatrix));
 // select date and time
 var sdate;
@@ -252,7 +250,7 @@ function gobook() {
 // get ***validated*** contactinfo from input first!
 // modify thefirst statement can remove the slashes to make it a real book
 
-//Kevin's modified section below for non hardcoded values
+//Kevin's modified section for non-hardcoded values
         var b = client.book(
                 serviceId, performerId, date, time, 
             	{'name': $('#iname').val(), 'email': $('#iemail').val(), 'phone': $('#iphone').val()},
