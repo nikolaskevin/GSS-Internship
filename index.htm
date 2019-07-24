@@ -77,7 +77,7 @@ $("p").hide();
 $("div").show();
 $("#ss").show();
 
-// get API token
+// get API token. for testing reasons, token is generated in client side. Future implementations can move token generation to server side
 
 var loginClient = new JSONRpcClient({
 	'url': 'https://user-api.simplybook.me' + '/login',
@@ -94,7 +94,7 @@ this.client = new JSONRpcClient({
 	'onerror': function (error) {}
 });
 
-// get services and performers
+// get list of services and performers
 
 var services = client.getEventList();
 var performers = client.getUnitList();
@@ -165,7 +165,6 @@ $('#select_unit_id').change(function () {
 function gocheckdatetime() {
 var firstWorkingDay = client.getFirstWorkingDay(performerId);
 console.log(firstWorkingDay);
-// $('#first_date').val(firstWorkingDay).change();
 
 
 // add 6 days for "from date" and "to date"
@@ -176,7 +175,7 @@ f.setTime(d); //assigns the Date and Time value represented in d into the Date a
 var ff =f.toISOString(); //converts the longer string of f into an ISO Date and Time string (end of ff contains no time information)
 var firstWorkingDayAdd6 = ff.substr(0, 10); //reads and assigns the Date portion of the ISO string
 var startMatrix = client.getStartTimeMatrix(firstWorkingDay, firstWorkingDayAdd6, serviceId, performerId, 1);
-// window.alert("startMatrix  "+JSON.stringify(startMatrix));
+
 // select date and time
 var sdate;
 
@@ -196,7 +195,6 @@ for (var id in startMatrix) {
 
 $("#sd").show();
 $("#select_date").show();
-// $('#select_date').val(sdate).change();
 
 $('#select_time').empty();
 
@@ -245,12 +243,9 @@ console.log(serviceId, performerId, date, time);
 }
 
 function gobook() {
-// var b = client.book(1,4,'2019-07-19','09:00:00',{name:'Mo', email:'abc@abc.com',  phone: '009876'},{},1);
 // parameters in sequence: serviceId, providerId, date, time, contactinfo, unknown {}, count
 // get ***validated*** contactinfo from input first!
-// modify thefirst statement can remove the slashes to make it a real book
 
-//Kevin's modified section for non-hardcoded values
         var b = client.book(
                 serviceId, performerId, date, time, 
             	{'name': $('#iname').val(), 'email': $('#iemail').val(), 'phone': $('#iphone').val()},
