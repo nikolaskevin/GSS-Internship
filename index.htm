@@ -209,6 +209,8 @@ $('#select_date').change(function () {
 
         $('#select_time').empty();
 
+        $('#select_time').append('<option value=""></option>');
+
         for (var id in startMatrix[sdate]) {
           $('#select_time').append('<option value="' + id + '">' + startMatrix[sdate][id] + '</option>');
 
